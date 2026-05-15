@@ -1,0 +1,14 @@
+.claude/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyc
+.DS_Store
+.ipynb_checkpoints/
+*.egg-info/
+dist/
+build/
+*.log
+../data/
+../save_results/
+../logs/

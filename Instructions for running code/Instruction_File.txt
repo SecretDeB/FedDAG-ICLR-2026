@@ -1,0 +1,103 @@
+Instructions for Running FedDAG
+================================
+
+## Key Dependencies
+
+FedDAG requires the following software:
+  - Python 3.9 or higher
+  - PyTorch 2.9.1 (with CUDA support recommended for GPU training)
+  - torchvision 0.24.1
+  - NumPy 2.3.3
+  - SciPy 1.16.2
+  - scikit-learn 1.7.2
+  - Pillow, tqdm, matplotlib
+
+Install all dependencies at once by running:
+
+    pip install -r Code/requirements.txt
+
+
+## Data Preparation
+
+Standard benchmarks (CIFAR-10, CIFAR-100, MNIST, Fashion-MNIST) are downloaded
+automatically by torchvision on the first run and stored in '../data/' by default.
+Use the '--datadir' flag to specify a custom path.
+
+For TinyImageNet, download the dataset manually from:
+    http://cs231n.stanford.edu/tiny-imagenet-200.zip
+and place the extracted folder at the location specified by '--datadir'.
+
+
+## Running the Code
+
+Navigate to the Code/ directory before executing any commands.
+
+Basic run (CIFAR-10, Dirichlet β=1.0, 100 clients, 20% sampling):
+
+    python JN_main_feddag.py --dataset cifar10 --rounds 201 --frac 0.2 --beta 1 --gpu 0
+
+CIFAR-10, non-IID Dirichlet (β=0.5):
+
+    python JN_main_feddag.py --dataset cifar10 --partition noniid-labeldir --beta 0.5 \
+        --rounds 201 --num_users 100 --frac 0.2 --gpu 0
+
+CIFAR-100:
+
+    python JN_main_feddag.py --dataset cifar100 --model simple-cnn-3 \
+        --partition noniid-labeldir --beta 0.5 --rounds 201 --num_users 100 \
+        --frac 0.2 --gpu 0
+
+MNIST / Fashion-MNIST:
+
+    python JN_main_feddag.py --dataset fmnist --partition noniid-labeldir \
+        --beta 0.5 --rounds 201 --num_users 100 --frac 0.2 --gpu 0
+
+To run on CPU (no GPU), omit '--gpu' or set '--gpu -1'.
+
+To use the Jupyter notebook version instead, open:
+
+    Code/JN_main_feddag.ipynb
+
+
+## Key Configuration Parameters
+
+  --rounds          Number of communication rounds (default: 201)
+  --num_users       Number of clients (default: 100)
+  --frac            Fraction of clients sampled per round (default: 0.2)
+  --local_ep        Number of local training epochs (default: 10)
+  --local_bs        Local batch size (default: 32)
+  --lr              Learning rate (default: 0.01)
+  --beta            Dirichlet concentration parameter for non-IID partitioning (default: 1.0)
+                    Lower values = more heterogeneous data distribution
+  --cluster_alpha   Distance threshold for hierarchical clustering (default: 1.37)
+  --n_basis         SVD basis vectors per class per client (default: 3)
+  --partition       Data partitioning strategy:
+                      'noniid-labeldir'  - Dirichlet label distribution (recommended)
+                      'homo'             - IID partitioning
+                      'noniid-#label2'   - Fixed 2 classes per client (or 1, 3, ...)
+  --gpu             GPU device ID; set to -1 for CPU (default: -1)
+  --print_freq      Print training stats every N rounds (default: 10)
+
+
+## Output
+
+Training accuracy statistics (per-client best_pre, best_post, best_any) are printed
+to stdout every '--print_freq' rounds. Results and logs are saved to '../save_results/'
+and '../logs/' respectively (configurable via '--savedir' and '--logdir').
+
+
+## Reproducing Paper Results
+
+The main experiments in the paper use:
+  - 100 clients, 20% sampling rate (--num_users 100 --frac 0.2)
+  - Dirichlet non-IID partitioning with β ∈ {0.1, 0.5, 1.0}
+  - 201 communication rounds
+  - Datasets: CIFAR-10, CIFAR-100, MNIST, Fashion-MNIST
+
+Run across multiple seeds (e.g., --seed 1 --seed 2 --seed 3) and average results
+to obtain stable estimates matching the reported numbers.
+
+
+## Contact
+
+For questions or issues, please contact: ap2645@njit.edu
