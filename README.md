@@ -2,8 +2,6 @@
 
 This repository includes the implementation of the FedDAG framework, presented at ICLR 2026.
 
-**Paper:** "[FedDAG: Clustered Federated Learning via Global Data and Gradient Integration for Heterogeneous Environments](https://iclr.cc/virtual/2026/poster/10008332)"
-
 <b>NOTICE:</b> This is an academic proof-of-concept prototype and has not received careful code review. This implementation is NOT ready for production use.
 
 <img width="2400" height="1639" alt="FedDAG Architecture" src="figure1.png" />
